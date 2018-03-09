@@ -2,6 +2,7 @@ from pyspark.sql import SparkSession
 from pyspark.ml.evaluation import RegressionEvaluator
 from pyspark.ml.recommendation import ALS
 from pyspark.sql import Row
+from pyspark.sql.functions import lit
 
 import sys
 
@@ -22,8 +23,8 @@ ratings = spark.createDataFrame(ratingsRDD)
 
 global_avg = training.groupby().avg().collect()[0]['avg(rating)']
 print(global_avg)
-training = training.withColumn('global_avg', global_avg)
-test = test.withColumn('global_avg', global_avg)
+training = training.withColumn('global_avg', lit(global_avg))
+test = test.withColumn('global_avg', lit(global_avg))
 
 als = ALS(rank=70, maxIter=5, regParam=0.01, userCol="userId", itemCol="movieId", ratingCol="global_avg", 
               coldStartStrategy="drop")
