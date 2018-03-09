@@ -21,6 +21,7 @@ ratings = spark.createDataFrame(ratingsRDD)
 (training, test) = ratings.randomSplit([0.8, 0.2], seed=desired_seed)
 
 global_avg = training.groupby().avg().collect()[0]['avg(rating)']
+print(global_avg)
 training = training.withColumn('global_avg', global_avg)
 test = test.withColumn('global_avg', global_avg)
 
