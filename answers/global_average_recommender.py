@@ -36,5 +36,5 @@ predictions = model.transform(test)
 
 evaluator = RegressionEvaluator(metricName="rmse", labelCol="global_avg",
                             predictionCol="prediction")
-rmse = evaluator.evaluate(predictions)
+rmse = evaluator.evaluate(training)
 print(str(rmse))
