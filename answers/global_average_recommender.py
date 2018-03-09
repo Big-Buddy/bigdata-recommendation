@@ -26,7 +26,9 @@ global_avg = training.groupby().avg().collect()[0]['avg(rating)']
 training = training.withColumn('prediction', lit(global_avg))
 test = test.withColumn('prediction', lit(global_avg))
 
+predictions = training.transform(test)
+
 evaluator = RegressionEvaluator(metricName="rmse", labelCol="rating",
                             predictionCol="prediction")
-rmse = evaluator.evaluate(training.join(test))
+rmse = evaluator.evaluate(predictions)
 print(str(rmse))
