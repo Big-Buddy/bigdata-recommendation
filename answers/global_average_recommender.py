@@ -20,9 +20,9 @@ ratingsRDD = parts.map(lambda p: Row(userId=int(p[0]), movieId=int(p[1]),
 ratings = spark.createDataFrame(ratingsRDD)
 (training, test) = ratings.randomSplit([0.8, 0.2], seed=desired_seed)
 
-training_avg = training.groupby().avg()
-training = training.withColumn('global_rating_avg', training_avg[0]['avg(rating)'])
-test = test.withColumn('global_rating_avg', training_avg[0]['avg(rating)'])
+global_avg = training.groupby().avg()[0]['avg(rating)']
+training = training.withColumn('global_rating_avg', global_avg)
+test = test.withColumn('global_rating_avg', global_avg)
 
 als = ALS(rank=70, maxIter=5, regParam=0.01, userCol="userId", itemCol="movieId", ratingCol="global_rating_avg", 
               coldStartStrategy="drop")
