@@ -28,5 +28,5 @@ test = test.withColumn('prediction', lit(global_avg))
 
 evaluator = RegressionEvaluator(metricName="rmse", labelCol="rating",
                             predictionCol="prediction")
-rmse = evaluator.evaluate(training)
+rmse = evaluator.evaluate(training.join(test))
 print(str(rmse))
