@@ -22,7 +22,7 @@ ratings = spark.createDataFrame(ratingsRDD)
 
 training_avg = training.groupby().avg()
 
-als = ALS(rank=70, maxIter=5, regParam=0.01, userCol="userId", itemCol="movieId", ratingCol="rating", rating_avg="global_rating_avg", 
+als = ALS(rank=70, maxIter=5, regParam=0.01, userCol="userId", itemCol="movieId", ratingCol="global_rating_avg", 
               coldStartStrategy="drop")
 als = als.setSeed(int(desired_seed))
 model = als.fit(training)
