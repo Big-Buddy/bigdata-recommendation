@@ -20,7 +20,6 @@ ratingsRDD = parts.map(lambda p: Row(userId=int(p[0]), movieId=int(p[1]),
 ratings = spark.createDataFrame(ratingsRDD)
 (training, test) = ratings.randomSplit([0.8, 0.2], seed=desired_seed)
 
-
 training_avg = training.groupby().avg().collect()
 
 print(training_avg[0]['avg(rating)'])
