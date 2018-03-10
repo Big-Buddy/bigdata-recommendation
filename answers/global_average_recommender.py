@@ -32,7 +32,6 @@ als = als.setSeed(int(desired_seed))
 model = als.fit(training)
 
 predictions = model.transform(test)
-predictions = predictions.withColumn()
 
 evaluator = RegressionEvaluator(metricName="rmse", labelCol="rating",
                             predictionCol="global_avg_rating")
