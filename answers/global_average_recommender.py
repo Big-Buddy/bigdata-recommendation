@@ -23,17 +23,17 @@ ratings = spark.createDataFrame(ratingsRDD)
 
 global_avg = training.groupby().avg().collect()[0]['avg(rating)']
 
-training = training.withColumn('prediction', lit(global_avg))
-test = test.withColumn('prediction', lit(global_avg))
+training = training.withColumn('global_avg_rating', lit(global_avg))
+test = test.withColumn('global_avg_rating', lit(global_avg))
 
-als = ALS(rank=70, maxIter=5, regParam=0.01, userCol="userId", itemCol="movieId", ratingCol="rating",
+als = ALS(rank=70, maxIter=5, regParam=0.01, userCol="userId", itemCol="movieId", ratingCol="global_avg_rating",
               coldStartStrategy="drop")
 als = als.setSeed(int(desired_seed))
 model = als.fit(training)
 
 predictions = model.transform(test)
 
-evaluator = RegressionEvaluator(metricName="rmse", labelCol="rating",
+evaluator = RegressionEvaluator(metricName="rmse", labelCol="global_avg_rating",
                             predictionCol="prediction")
 rmse = evaluator.evaluate(predictions)
 print(str(rmse))
