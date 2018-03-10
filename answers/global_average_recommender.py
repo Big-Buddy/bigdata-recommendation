@@ -26,14 +26,15 @@ global_avg = training.groupby().avg().collect()[0]['avg(rating)']
 training = training.withColumn('global_avg_rating', lit(global_avg))
 test = test.withColumn('global_avg_rating', lit(global_avg))
 
-als = ALS(rank=70, maxIter=5, regParam=0.01, userCol="userId", itemCol="movieId", ratingCol="global_avg_rating",
+als = ALS(rank=70, maxIter=5, regParam=0.01, userCol="userId", itemCol="movieId", ratingCol="rating",
               coldStartStrategy="drop")
 als = als.setSeed(int(desired_seed))
 model = als.fit(training)
 
 predictions = model.transform(test)
+predictions = predictions.withColumn()
 
-evaluator = RegressionEvaluator(metricName="rmse", labelCol="global_avg_rating",
-                            predictionCol="prediction")
+evaluator = RegressionEvaluator(metricName="rmse", labelCol="rating",
+                            predictionCol="global_avg_rating")
 rmse = evaluator.evaluate(predictions)
 print(str(rmse))

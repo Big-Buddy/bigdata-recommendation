@@ -30,4 +30,3 @@ evaluator = RegressionEvaluator(metricName="rmse", labelCol="rating",
                             predictionCol="prediction")
 rmse = evaluator.evaluate(predictions)
 print(str(rmse))
-print(str(rmse-1.16693421444))
