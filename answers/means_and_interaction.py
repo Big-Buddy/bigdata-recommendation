@@ -44,4 +44,4 @@ reordered_training = reordered_training.drop('globalmean')
 reordered_training = reordered_training.withColumnRenamed('usermean', 'user-mean')
 reordered_training = reordered_training.withColumnRenamed('itemmean', 'item-mean')
 
-reordered_training.orderBy('userId', 'movieId').show()
+reordered_training.orderBy('userId', 'movieId').show(n=17)
