@@ -34,8 +34,8 @@ test = test.join(item_mean_df, ['movieId'])
 reordered_training = training.select('userId', 'movieId', 'rating', 'usermean', 'itemmean')
 reordered_test = test.select('userId', 'movieId', 'rating', 'usermean', 'itemmean')
 
-reordered_training = reordered_training.withColumn('user-item-interaction', training.rating-(training.usermean+training.itemmean-global_mean))
-reordered_test = reordered_test.withColumn('user-item-interaction', test.rating-(test.usermean+test.itemmean-global_mean))
+reordered_training = reordered_training.withColumn('user-item-interaction', training.rating-(training.usermean+training.itemmean-lit(global_mean)))
+reordered_test = reordered_test.withColumn('user-item-interaction', test.rating-(test.usermean+test.itemmean-lit(global_mean)))
 
 ###Change position of columns and rename columns
 
