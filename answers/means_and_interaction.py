@@ -26,10 +26,10 @@ global_mean = training.groupby().avg('rating').collect()
 user_mean_df = training.groupby('userId').agg({'rating' : 'avg'})
 item_mean_df = training.groupby('movieId').agg({'rating' : 'avg'})
 
-training = training.join(user_mean_df, training.userId == user_mean_df.userId)
-training = training.join(item_mean_df, training.movieId == item_mean_df.movieId)
-test = test.join(user_mean_df, test.userId == user_mean_df.userId)
-test = test.join(item_mean_df, test.movieId == item_mean_df.movieId)
+training = training.join(user_mean_df, ['userId'])
+training = training.join(item_mean_df, ['movieId'])
+test = test.join(user_mean_df, ['userId'])
+test = test.join(item_mean_df, ['movieId'])
 
 training.show()
 
