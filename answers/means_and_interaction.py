@@ -28,33 +28,20 @@ item_mean_df = training.groupby('movieId').agg({'rating' : 'avg'}).withColumnRen
 
 training = training.join(user_mean_df, ['userId'])
 training = training.join(item_mean_df, ['movieId'])
-test = test.join(user_mean_df, ['userId'])
-test = test.join(item_mean_df, ['movieId'])
+#test = test.join(user_mean_df, ['userId'])
+#test = test.join(item_mean_df, ['movieId'])
 
 reordered_training = training.select('userId', 'movieId', 'rating', 'usermean', 'itemmean')
-reordered_test = test.select('userId', 'movieId', 'rating', 'usermean', 'itemmean')
+#reordered_test = test.select('userId', 'movieId', 'rating', 'usermean', 'itemmean')
 
 reordered_training = reordered_training.withColumn('globalmean', lit(global_mean))
-reordered_test = reordered_test.withColumn('globalmean', lit(global_mean))
+#reordered_test = reordered_test.withColumn('globalmean', lit(global_mean))
 
 reordered_training = reordered_training.withColumn('user-item-interaction', reordered_training.rating-(reordered_training.usermean+reordered_training.itemmean-reordered_training.globalmean))
-reordered_test = reordered_test.withColumn('user-item-interaction', reordered_test.rating-(reordered_test.usermean+reordered_test.itemmean-reordered_test.globalmean))
+#reordered_test = reordered_test.withColumn('user-item-interaction', reordered_test.rating-(reordered_test.usermean+reordered_test.itemmean-reordered_test.globalmean))
 
-###Change position of columns and rename columns
+reordered_training = reordered_training.drop('globalmean')
+reordered_training = reordered_training.withColumnRenamed('usermean', 'user-mean')
+reordered_training = reordered_training.withColumnRenamed('itemmean', 'item-mean')
 
-als = ALS(rank=70, maxIter=5, regParam=0.01, userCol="userId", itemCol="movieId", ratingCol="rating",
-              coldStartStrategy="drop")
-als = als.setSeed(int(desired_seed))
-model = als.fit(reordered_training)
-
-final_df = model.transform(reordered_test)
-
-final_df = final_df.drop('globalmean')
-final_df = final_df.drop('prediction')
-final_df = final_df.withColumnRenamed('usermean', 'user-mean')
-final_df = final_df.withColumnRenamed('itemmean', 'item-mean')
-
-final_df.orderBy('userId', 'movieId').show()
-
-
-### Order dataframe and show(desired_rows)
+reordered_training.orderBy('userId', 'movieId').show()
