@@ -23,16 +23,21 @@ ratings = spark.createDataFrame(ratingsRDD)
 
 global_mean = training.groupby().avg('rating').collect()
 
-user_mean_df = training.groupby('userId').agg({'rating' : 'avg'})
-item_mean_df = training.groupby('movieId').agg({'rating' : 'avg'})
+user_mean_df = training.groupby('userId').agg(avg('rating').alias('user-mean'))
+item_mean_df = training.groupby('movieId').agg(avg('rating').alias('item-mean'))
 
 training = training.join(user_mean_df, ['userId'])
 training = training.join(item_mean_df, ['movieId'])
 test = test.join(user_mean_df, ['userId'])
 test = test.join(item_mean_df, ['movieId'])
 
+reordered_training = training.select('userId', 'movieId', 'rating', 'user-mean', 'item-mean')
+reordered_test = test.select('userId', 'movieId', 'rating', 'user-mean', 'item-mean')
 
-training.orderBy('userId', 'movieId').show()
+reordered_training = reordered_training.withColumn('user-item-interaction', training.rating-(training.user-mean+training.item-mean-global_mean))
+reordered_test = reordered_test.withColumn('user-item-interaction', test.rating-(test.user-mean+test.item-mean-global_mean))
+
+###Change position of columns and rename columns
 
 als = ALS(rank=70, maxIter=5, regParam=0.01, userCol="userId", itemCol="movieId", ratingCol="rating",
               coldStartStrategy="drop")
@@ -40,6 +45,7 @@ als = als.setSeed(int(desired_seed))
 model = als.fit(training)
 
 final_df = model.transform(test)
+final_df.orderBy('userId', 'movieId').show()
 
 
 ### Order dataframe and show(desired_rows)
