@@ -37,8 +37,8 @@ reordered_test = test.select('userId', 'movieId', 'rating', 'usermean', 'itemmea
 reordered_training = reordered_training.withColumn('globalmean', lit(global_mean))
 reordered_test = reordered_test.withColumn('globalmean', lit(global_mean))
 
-reordered_training = reordered_training.withColumn('user-item-interaction', training.rating-(training.usermean+training.itemmean-training.globalmean))
-reordered_test = reordered_test.withColumn('user-item-interaction', test.rating-(test.usermean+test.itemmean-test.globalmean))
+reordered_training = reordered_training.withColumn('user-item-interaction', reordered_training.rating-(reordered_training.usermean+reordered_training.itemmean-reordered_training.globalmean))
+reordered_test = reordered_test.withColumn('user-item-interaction', reordered_test.rating-(reordered_test.usermean+reordered_test.itemmean-reordered_test.globalmean))
 
 ###Change position of columns and rename columns
 
