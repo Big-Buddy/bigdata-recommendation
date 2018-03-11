@@ -34,17 +34,25 @@ test = test.join(item_mean_df, ['movieId'])
 reordered_training = training.select('userId', 'movieId', 'rating', 'usermean', 'itemmean')
 reordered_test = test.select('userId', 'movieId', 'rating', 'usermean', 'itemmean')
 
-reordered_training = reordered_training.withColumn('user-item-interaction', training.rating-(training.usermean+training.itemmean))
-reordered_test = reordered_test.withColumn('user-item-interaction', test.rating-(test.usermean+test.itemmean))
+reordered_training = reordered_training.withColumn('globalmean', lit(global_mean))
+reordered_test = reordered_test.withColumn('globalmean', lit(global_mean))
+
+reordered_training = reordered_training.withColumn('user-item-interaction', training.rating-(training.usermean+training.itemmean-training.globalmean))
+reordered_test = reordered_test.withColumn('user-item-interaction', test.rating-(test.usermean+test.itemmean-test.globalmean))
 
 ###Change position of columns and rename columns
 
 als = ALS(rank=70, maxIter=5, regParam=0.01, userCol="userId", itemCol="movieId", ratingCol="rating",
               coldStartStrategy="drop")
 als = als.setSeed(int(desired_seed))
-model = als.fit(training)
+model = als.fit(reordered_training)
 
-final_df = model.transform(test)
+final_df = model.transform(reordered_test)
+
+final_df = final_df.drop('globalmean')
+final_df = final_df.withColumnRenamed('usermean', 'user-mean')
+final_df = final_df.withColumnRenamed('itemmean', 'item-mean')
+
 final_df.orderBy('userId', 'movieId').show()
 
 
