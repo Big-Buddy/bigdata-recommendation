@@ -21,7 +21,7 @@ ratingsRDD = parts.map(lambda p: Row(userId=int(p[0]), movieId=int(p[1]),
 ratings = spark.createDataFrame(ratingsRDD)
 (training, test) = ratings.randomSplit([0.8, 0.2], seed=desired_seed)
 
-global_mean = training.groupby().avg('rating').collect()[0]
+global_mean = training.groupby().avg('rating').collect()[0]['avg(rating)']
 
 user_mean_df = training.groupby('userId').agg({'rating' : 'avg'}).withColumnRenamed('avg(rating)', 'usermean')
 item_mean_df = training.groupby('movieId').agg({'rating' : 'avg'}).withColumnRenamed('avg(rating)', 'itemmean')
