@@ -31,7 +31,7 @@ training = training.join(user_mean_df, ['userId'])
 test = test.join(item_mean_df, ['movieId'])
 test = test.join(user_mean_df, ['userId'])
 
-training.orderBy('userId', 'movieId').show(n = desired_seed)
+training.orderBy('userId').show(n = desired_seed)
 
 als = ALS(rank=70, maxIter=5, regParam=0.01, userCol="userId", itemCol="movieId", ratingCol="rating",
               coldStartStrategy="drop")
