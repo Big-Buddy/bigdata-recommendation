@@ -27,9 +27,6 @@ user_mean_df = training.groupby('userId').agg({'rating' : 'avg'}).collect()
 
 user_mean_df.show()
 
-training = training.withColumn('user-item-interaction', training.rating-(training.user-mean+training.item-mean-global_mean))
-test = test.withColumn('user-item-interaction', test.rating-(test.user-mean+test.item-mean-global_mean))
-
 als = ALS(rank=70, maxIter=5, regParam=0.01, userCol="userId", itemCol="movieId", ratingCol="rating",
               coldStartStrategy="drop")
 als = als.setSeed(int(desired_seed))
