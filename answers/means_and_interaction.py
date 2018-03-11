@@ -50,6 +50,7 @@ model = als.fit(reordered_training)
 final_df = model.transform(reordered_test)
 
 final_df = final_df.drop('globalmean')
+final_df = final_df.drop('prediction')
 final_df = final_df.withColumnRenamed('usermean', 'user-mean')
 final_df = final_df.withColumnRenamed('itemmean', 'item-mean')
 
